@@ -1,0 +1,60 @@
+@model DevExpress.Xpo.XPQuery<XPEmail>
+
+
+@(Html.DevExpress()
+                  .BootstrapGridView<XPEmail>("gridWithXPO")
+                  .KeyFieldName(k => k.ID)
+                  .Columns(columns => {
+                      columns.AddCommandColumn()
+                        .ShowEditButton(true)
+                        .ShowNewButtonInHeader(true)
+                        .ShowDeleteButton(true);
+                      columns.Add(c => c.From);
+                      columns.Add(c => c.Subject);
+                      columns
+                          .Add(c => c.Sent)
+                          .Width(220);
+                      columns
+                          .Add(c => c.HasAttachment)
+                          .Width(150);
+                      columns
+                          .Add(c => c.Size)
+                          .Settings(settings => settings.AllowAutoFilter(false));
+                  })
+                  .TotalSummary(summary => summary
+                      .Add(s => s.Size)
+                      .SummaryType(DevExpress.Data.SummaryItemType.Sum))
+                  .GroupSummary(summary => summary
+                      .Add()
+                      .SummaryType(DevExpress.Data.SummaryItemType.Count))
+                  .Settings(settings => settings
+                      .ShowFilterRow(true)
+                      .ShowFilterRowMenu(true)
+                      .ShowGroupPanel(true)
+                      .ShowFooter(true))
+                .Routes(routes => routes
+                    .MapRoute(r => r
+                        .Action("GridViewPartial")
+                        .Controller("Sample"))
+                    .MapRoute(r => r
+                        .RouteType(GridViewRouteType.UpdateRow)
+                        .Action("UpdateRow")
+                        .Controller("Sample"))
+                    .MapRoute(r => r
+                        .RouteType(GridViewRouteType.AddRow)
+                        .Action("AddNewRow")
+                        .Controller("Sample"))
+                    .MapRoute(r => r
+                        .RouteType(GridViewRouteType.DeleteRow)
+                        .Action("DeleteRow")
+                        .Controller("Sample")))
+                .SettingsPager(pager => pager
+                .NumericButtonCount(4)
+                .PageSizeItemSettings(pageSize => pageSize
+                    .Visible(true)
+                    .Items("10", "20", "50")))
+            .CssClassesPager(pager => pager
+                .PageNumber("d-none d-xl-block")
+                .Ellipsis("d-none d-xl-block")
+                .Summary("d-none d-md-block"))
+            .BindToXPO(Model))
